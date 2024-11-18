@@ -1,0 +1,105 @@
+.configuration {
+    padding: 20px;
+    font-family: Arial, sans-serif;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .label {
+    font-weight: bold;
+  }
+  
+  .input-field {
+    padding: 8px;
+    font-size: 14px;
+    width: 200px;
+    margin-left: 10px;
+  }
+  
+  .customer-box {
+    margin-top: 30px;
+    padding: 20px;
+    background-color: #f9f9f9;
+    border-radius: 8px;
+  }
+  
+  .customer-form {
+    display: flex;
+    align-items: center;
+    margin-bottom: 10px;
+  }
+  
+  .customer-form input[type="text"] {
+    padding: 8px;
+    font-size: 14px;
+    width: 180px;
+    margin-right: 10px;
+  }
+  
+  .customer-form button {
+    padding: 8px 15px;
+    font-size: 14px;
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+  }
+  
+  .customer-form button:hover {
+    background-color: #45a049;
+  }
+  
+  .customer-list {
+    list-style-type: none;
+    padding: 0;
+  }
+  
+  .customer-item {
+    padding: 8px 0;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+  
+  .btn-remove {
+    background-color: #f44336;
+    color: white;
+    border: none;
+    cursor: pointer;
+    border-radius: 5px;
+    padding: 5px 10px;
+  }
+  
+  .btn-remove:hover {
+    background-color: #e53935;
+  }
+  
+  .action-buttons {
+    margin-top: 30px;
+  }
+  
+  .btn {
+    padding: 10px 20px;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 5px;
+    margin-right: 15px;
+  }
+  
+  .start {
+    background-color: #4CAF50;
+    color: white;
+  }
+  
+  .stop {
+    background-color: #f44336;
+    color: white;
+  }
+  
+  .btn:hover {
+    opacity: 0.8;
+  }
+  
