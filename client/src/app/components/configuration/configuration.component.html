@@ -1,0 +1,42 @@
+<h2 class="ConfigTitle">Enter Configuration</h2>
+
+<h3 class="ConfigInfo">Total Number of Tickets:</h3>
+<input
+  class="TextBox"
+  type="number"
+  name="totalTickets"
+  [(ngModel)]="totalTickets"
+  placeholder="Enter total tickets"
+/>
+
+<h3 class="ConfigInfo">Ticket Release Rate:</h3>
+<input
+  class="TextBox"
+  type="number"
+  name="ticketReleaseRate"
+  [(ngModel)]="ticketReleaseRate"
+  placeholder="Enter release rate"
+/>
+
+<h3 class="ConfigInfo">Customer Retrieval Rate:</h3>
+<input
+  class="TextBox"
+  type="number"
+  name="customerRetrievalRate"
+  [(ngModel)]="customerRetrievalRate"
+  placeholder="Enter retrieval rate"
+/>
+
+<h3 class="ConfigInfo">Maximum Ticket Capacity:</h3>
+<input
+  class="TextBox"
+  type="number"
+  name="maxTicketCapacity"
+  [(ngModel)]="maxTicketCapacity"
+  placeholder="Enter maximum capacity"
+/>
+
+<div class="button-container">
+  <button class="btn" id="start-btn" (click)="startSystem()">Start System</button>
+  <button class="btn" id="end-btn" (click)="endSystem()">End System</button>
+</div>
