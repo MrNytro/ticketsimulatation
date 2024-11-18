@@ -1,47 +1,14 @@
-<div class="configuration">
-    <h2>Enter Configurations</h2>
-  
-    <!-- Ticket Configuration Form -->
-    <div class="form-group">
-      <label for="totalTickets">Total Number of Tickets:</label>
-      <input type="number" id="totalTickets" [(ngModel)]="totalTickets" class="input-field"/>
-    </div>
-    
-    <div class="form-group">
-      <label for="releaseRate">Ticket Release Rate:</label>
-      <input type="number" id="releaseRate" [(ngModel)]="releaseRate" class="input-field"/>
-    </div>
-    
-    <div class="form-group">
-      <label for="maxCapacity">Maximum Ticket Capacity:</label>
-      <input type="number" id="maxCapacity" [(ngModel)]="maxCapacity" class="input-field"/>
-    </div>
-  
-    <!-- Customer Addition Section -->
-    <div class="customer-box">
-      <h3>Customers</h3>
-      <div class="customer-form">
-        <input type="text" #customerName placeholder="Customer Name" class="input-field"/>
-        <label for="isVIP">
-          VIP?
-          <input type="checkbox" id="isVIP" #isVIP/>
-        </label>
-        <button class="btn" (click)="addCustomer(customerName.value, isVIP.checked, customerName, isVIP)">Add Customer</button>
-      </div>
-      
-      <!-- List of customers -->
-      <ul class="customer-list">
-        <li *ngFor="let customer of customers; let i = index" class="customer-item">
-          {{ customer.name }} ({{ customer.isVIP ? 'VIP' : 'Regular' }})
-          <button class="btn-remove" (click)="removeCustomer(i)">Remove</button>
-        </li>
-      </ul>
-    </div>
-  
-    <!-- Start/Stop System -->
-    <div class="action-buttons">
-      <button class="btn start" (click)="startSystem()">Start</button>
-      <button class="btn stop" (click)="stopSystem()">Stop</button>
-    </div>
-  </div>
-  
+
+<h2 class="ConfigTitle">Enter Configuration</h2>
+<h3 class="ConfigInfo">Total Number of Tickets:</h3>
+<input class="TextBox" type="text" name="Number of Tickets">
+<h3 class="ConfigInfo">Ticket Release Rate:</h3>
+<input class="TextBox" type="text" name="Number of Tickets">
+<h3 class="ConfigInfo">Customer Retrieval Rate:</h3>
+<input class="TextBox" type="text" name="Number of Tickets">
+ <h3 class="ConfigInfo">Maximum Ticket Capacity:</h3>
+<input class="TextBox" type="text" name="Number of Tickets">
+<div class="button-container">
+    <button class="btn" id="start-btn">Start System</button>
+    <button class="btn" id="end-btn">End System</button>
+</div>

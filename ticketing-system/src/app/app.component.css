@@ -7,6 +7,24 @@
     height: 100vh;
     box-sizing: border-box;
   }
+
+  .header {
+    text-align: center;
+    font-family: sans-serif;
+    font-weight: bold;
+    background-color: #EEEEEE;
+    color: black;
+    width: 100%;
+    height: 100px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    font-size: 42px;
+    text-align: center;
+    overflow: hidden;
+    box-shadow: 3px 5px 6px rgba(169, 169, 169, 0.6); 
+  }
   
   /* Styling for each box */
   .box {
@@ -16,18 +34,13 @@
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
     flex: 1;  /* Allow the boxes to grow and fill space */
     min-width: 250px;  /* Minimum width for each box */
-    height: 100%; /* Make boxes full height */
+    height: 75%; /* Make boxes full height */
     overflow: auto; /* Add scroll if content overflows */
   }
   
   /* Add some styling for the components inside the boxes */
   app-configuration, app-live-update, app-log-viewer {
     margin-bottom: 20px;
-  }
-  
-  /* Optional: Add hover effect to boxes */
-  .box:hover {
-    background-color: #e0e0e0;
   }
   
   /* Optional: Add a border and padding to the title of each box */
