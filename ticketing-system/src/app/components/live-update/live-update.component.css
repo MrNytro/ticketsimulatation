@@ -1,4 +1,22 @@
 .live-update {
-    padding: 20px;
-  }
-  
+  padding: 20px;
+}
+
+table {
+  margin-bottom: 20px;
+  width: 100%;
+  border-collapse: collapse;
+}
+
+table, th, td {
+  border: 1px solid black;
+}
+
+th, td {
+  padding: 8px;
+  text-align: center;
+}
+
+svg {
+  margin-top: 20px;
+}

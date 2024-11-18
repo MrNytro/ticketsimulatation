@@ -1,7 +1,30 @@
 <div class="live-update">
-    <h2>Live Updates</h2>
-    <ul>
-      <li *ngFor="let update of liveUpdates">{{ update }}</li>
-    </ul>
-  </div>
+  <h2>Live Updates</h2>
+
+  <!-- Table to show tickets -->
+  <table>
+    <tr>
+      <th>Total Tickets</th>
+      <th>Tickets Available</th>
+    </tr>
+    <tr>
+      <td>{{ totalTickets }}</td>
+      <td>{{ ticketsAvailable }}</td>
+    </tr>
+  </table>
+
+  <!-- Chart to show ticket availability -->
+  <ngx-charts-line-chart
+    [view]="[200, 200]"
+    [scheme]="'cool'"
+    [results]="chartData"
+    [xAxis]="true"
+    [yAxis]="true"
+    [autoScale]="true">
+  </ngx-charts-line-chart>
   
+  <!-- Live updates log -->
+  <ul>
+    <li *ngFor="let update of liveUpdates">{{ update }}</li>
+  </ul>
+</div>
