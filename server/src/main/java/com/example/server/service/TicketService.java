@@ -1,117 +1,102 @@
 package com.example.server.service;
 
 import com.example.server.model.TicketingConfiguration;
-import com.example.server.model.Ticket;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.TimeUnit;
+import java.util.Timer;
+import java.util.TimerTask;
 
 @Service
 public class TicketService {
+    private TicketingConfiguration config;
+    private Timer timer;
+    private boolean simulationRunning;
+    private List<String> eventLogs = new ArrayList<>(); // List to hold event logs
 
-    private TicketingConfiguration currentConfig;
-    private List<Ticket> tickets = new ArrayList<>();
-    private int totalTickets;
-    private ExecutorService executorService;  // Executor for handling concurrent tasks
-
-    // Start the simulation with the given configuration
+    // Start the simulation with the provided configuration
     public int startSimulation(TicketingConfiguration config) {
-        this.currentConfig = config;
-        this.totalTickets = config.getTotalTickets();
-        initializeTickets(config.getTotalTickets());  // Initialize ticket pool
-        System.out.println("Simulation started with config: " + config);
+        this.config = config;
+        this.simulationRunning = true;
 
-        // Initialize ExecutorService to manage concurrent tasks
-        executorService = Executors.newFixedThreadPool(2);  // 2 threads: one for booking, one for releasing
-
-        // Start ticket release simulation in a separate thread
-        executorService.submit(this::simulateTicketRelease);
-
-        return 1;  // Success
-    }
-
-    // Initialize tickets based on the total count
-    private void initializeTickets(int totalTickets) {
-        for (int i = 0; i < totalTickets; i++) {
-            tickets.add(new Ticket(i + 1));  // Add tickets with unique IDs and status
-        }
+        // Start a background thread for simulation
+        startTicketSimulation();
+        return 1;
     }
 
     // Stop the simulation
     public int stopSimulation() {
-        tickets.clear();
-        executorService.shutdownNow();  // Stop the executor service
-        System.out.println("Simulation stopped.");
-        return 1;  // Success
-    }
-
-    // Update the configuration dynamically
-    public int updateConfiguration(TicketingConfiguration config) {
-        this.currentConfig = config;
-        System.out.println("Configuration updated to: " + config);
-        return 1;  // Success
-    }
-
-    // Get all tickets (for backend monitoring)
-    public List<Ticket> getAllTickets() {
-        return tickets;
-    }
-
-    // Purchase (retrieve) a ticket
-    public synchronized int retrieveTicket(Ticket ticket) {
-        if (ticket.getStatus().equals("Available")) {
-            ticket.setStatus("Sold");  // Mark ticket as sold
-            tickets.remove(ticket);
-            System.out.println("Ticket " + ticket.getId() + " sold.");
-            return 1;  // Success
+        this.simulationRunning = false;
+        if (timer != null) {
+            timer.cancel(); // Stop the timer if simulation is stopped
         }
-        return -1;  // Ticket already sold
+        return 1;
     }
 
-    // Release a ticket (add it back to the pool)
-    public synchronized int releaseTicket() {
-        if (tickets.size() < totalTickets) {
-            int newTicketId = tickets.size() + 1;  // Assign new ticket ID
-            tickets.add(new Ticket(newTicketId));  // Add a new available ticket
-            System.out.println("Ticket " + newTicketId + " released.");
-            return 1;  // Success
-        }
-        return -2;  // Capacity reached
+    // Update the simulation configuration
+    public int updateConfiguration(TicketingConfiguration newConfig) {
+        this.config = newConfig;
+        return 1;
     }
 
-    // Simulate ticket release periodically (this method runs in a separate thread)
-    private void simulateTicketRelease() {
-        try {
-            while (!Thread.currentThread().isInterrupted()) {
-                TimeUnit.SECONDS.sleep(currentConfig.getTicketReleaseRate());  // Wait for the release rate time
-                releaseTicket();  // Release a ticket
+    // Fetch the current ticketing configuration
+    public TicketingConfiguration getLiveUpdates() {
+        return this.config;
+    }
+
+    // Fetch event logs
+    public List<String> getEventLogs() {
+        return new ArrayList<>(eventLogs); // Return a copy of the logs
+    }
+
+    // Start the ticket simulation with customer and vendor threads
+    private void startTicketSimulation() {
+        timer = new Timer();
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                if (!simulationRunning) return; // Exit if simulation is stopped
+
+                // Customer thread simulating ticket retrieval
+                if (config.getAvailableTickets() >= config.getCustomerRetrievalRate()) {
+                    config.setAvailableTickets(config.getAvailableTickets() - config.getCustomerRetrievalRate());
+                    logTicketUpdate("Customer bought " + config.getCustomerRetrievalRate() + " tickets");
+                }
+
+                // Vendor thread simulating ticket release
+                if (config.getTotalTickets() < config.getMaxTicketCapacity()) {
+                    config.setTotalTickets(config.getTotalTickets() + config.getTicketReleaseRate());
+                    config.setAvailableTickets(config.getAvailableTickets() + config.getTicketReleaseRate());
+                    logTicketUpdate("Vendor released " + config.getTicketReleaseRate() + " tickets");
+                }
+
+                // Ensure totalTickets never exceeds maxTickets and doesn't go below zero
+                if (config.getTotalTickets() > config.getMaxTicketCapacity()) {
+                    config.setTotalTickets(config.getMaxTicketCapacity());
+                }
+                if (config.getAvailableTickets() < 0) {
+                    config.setAvailableTickets(0);
+                }
             }
-        } catch (InterruptedException e) {
-            System.out.println("Ticket release simulation interrupted.");
-        }
+        }, 0, 1000); // Runs every 1 second
     }
 
-    // Method to allocate a ticket
-    public boolean allocateTicket(Ticket ticket) {
-        if (ticket != null && ticket.isAvailable()) {
-            ticket.setStatus("Allocated");
-            ticket.setAvailable(false);
-            return true;
-        }
-        return false;
-    }
+    // Log the current ticket pool state (to be sent to the frontend)
+    private void logTicketUpdate(String action) {
+        String logMessage = action + " | " +
+                String.format("{totalTickets: %d, availableTickets: %d}",
+                        config.getTotalTickets(), config.getAvailableTickets());
 
-    // Method to purchase a ticket
-    public int purchaseTicket(Ticket ticket) {
-        if (ticket != null && ticket.isAvailable()) {
-            ticket.setStatus("Purchased");
-            ticket.setAvailable(false);  // Mark the ticket as unavailable
-            return 1;  // Success
+        // Add the log message to the eventLogs list
+        eventLogs.add(logMessage);
+
+        // Optionally, you can limit the log size (e.g., keep only the last 50 logs)
+        if (eventLogs.size() > 50) {
+            eventLogs.remove(0); // Remove the oldest log if the list exceeds the limit
         }
-        return -2;  // Ticket unavailable
+
+        // Optionally log to the console
+        System.out.println(logMessage);
     }
 }

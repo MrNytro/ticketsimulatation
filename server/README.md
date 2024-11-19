@@ -13,6 +13,9 @@ server/
 │   │   │               ├── ServerApplication.java  // Main entry point (Spring Boot Application)
 │   │   │               ├── config/
 │   │   │               │   └── AppConfig.java  // Configuration classes (e.g., for system settings)
+│   │   │               │   └── WebSocketConfig.java.java
+│   │   │               ├── websocket/
+│   │   │               │   └── CustomWebSocketHandler.java
 │   │   │               ├── controller/
 │   │   │               │   ├── TicketController.java  // REST controller for ticket management
 │   │   │               │   └── ConfigController.java  // Controller for handling configuration requests

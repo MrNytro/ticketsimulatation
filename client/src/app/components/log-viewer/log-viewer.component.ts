@@ -1,5 +1,6 @@
-import { Component, Input, OnInit, OnDestroy } from '@angular/core';
-import { WebSocketService } from '../../services/websocket.service'; // Import WebSocketService
+import { Component, OnInit, OnDestroy, Input } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
+import { interval, Subscription } from 'rxjs';
 
 @Component({
   selector: 'app-log-viewer',
@@ -7,31 +8,29 @@ import { WebSocketService } from '../../services/websocket.service'; // Import W
   styleUrls: ['./log-viewer.component.css']
 })
 export class LogViewerComponent implements OnInit, OnDestroy {
-  @Input() logs: string[] = []; // Bind logs from the parent or other components
-  private socket!: WebSocket;
+  @Input() logs: string[] = [];  // Accept logs as input from the parent component
+  private logSubscription!: Subscription; // To manage periodic log updates
 
-  constructor(private webSocketService: WebSocketService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // Connect to WebSocket for log streaming
-    this.socket = this.webSocketService.connect('ws://localhost:8080/api/logs/stream');
-    
-    // Handle incoming messages (logs) from WebSocket
-    this.socket.onmessage = (event) => {
-      const logMessage = JSON.parse(event.data);
-      this.logs.unshift(logMessage);  // Add new logs to the top of the list
-    };
-
-    // Handle WebSocket errors
-    this.socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
-    };
+    // Fetch logs every second (adjust interval as needed)
+    this.logSubscription = interval(1000).subscribe(() => {
+      this.fetchLogs();
+    });
   }
 
   ngOnDestroy() {
-    // Close the WebSocket connection when the component is destroyed
-    if (this.socket) {
-      this.socket.close();
+    // Unsubscribe when component is destroyed to prevent memory leaks
+    if (this.logSubscription) {
+      this.logSubscription.unsubscribe();
     }
+  }
+
+  // Fetch the logs from the backend
+  private fetchLogs() {
+    this.http.get<string[]>('http://localhost:8080/tickets/logs').subscribe((logs) => {
+      this.logs = logs;  // Update the logs list
+    });
   }
 }

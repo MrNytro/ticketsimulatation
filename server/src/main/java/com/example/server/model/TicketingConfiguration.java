@@ -6,6 +6,8 @@ public class TicketingConfiguration {
     private int ticketReleaseRate;
     private int customerRetrievalRate;
     private int maxTicketCapacity;
+    private int availableTickets;  // Adding available tickets for live updates
+    private String status;         // Adding a status field to indicate simulation status (optional)
 
     // Getters and setters
     public int getTotalTickets() {
@@ -40,6 +42,22 @@ public class TicketingConfiguration {
         this.maxTicketCapacity = maxTicketCapacity;
     }
 
+    public int getAvailableTickets() {
+        return availableTickets;
+    }
+
+    public void setAvailableTickets(int availableTickets) {
+        this.availableTickets = availableTickets;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
+    }
+
     @Override
     public String toString() {
         return "TicketingConfiguration{" +
@@ -47,6 +65,8 @@ public class TicketingConfiguration {
                 ", ticketReleaseRate=" + ticketReleaseRate +
                 ", customerRetrievalRate=" + customerRetrievalRate +
                 ", maxTicketCapacity=" + maxTicketCapacity +
+                ", availableTickets=" + availableTickets +
+                ", status='" + status + '\'' +
                 '}';
     }
 }

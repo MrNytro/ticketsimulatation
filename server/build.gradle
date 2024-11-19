@@ -22,6 +22,7 @@ dependencies {
     implementation 'org.springframework.boot:spring-boot-starter-web'          // RESTful APIs
     implementation 'org.springframework.boot:spring-boot-starter-validation'   // Input validation
     implementation 'org.springframework.boot:spring-boot-starter-logging'      // Logging
+    implementation 'org.springframework.boot:spring-boot-starter-websocket'    // WebSocket support
     developmentOnly 'org.springframework.boot:spring-boot-devtools'            // Hot reload
     testRuntimeOnly 'org.junit.platform:junit-platform-launcher'               // JUnit platform support
 }

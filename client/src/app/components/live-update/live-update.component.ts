@@ -1,6 +1,8 @@
 import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
-import { WebSocketService } from '../../services/websocket.service'; // Import WebSocketService
-import { Color, ScaleType } from '@swimlane/ngx-charts';
+import { HttpClient } from '@angular/common/http';
+import { Subscription, interval } from 'rxjs';
+import { TicketingConfiguration } from '../../models/ticketing-configuration.model'; // Import the model
+import { Color, ScaleType } from '@swimlane/ngx-charts'; // Import for chart functionality
 
 @Component({
   selector: 'app-live-update',
@@ -8,55 +10,67 @@ import { Color, ScaleType } from '@swimlane/ngx-charts';
   styleUrls: ['./live-update.component.css'],
 })
 export class LiveUpdateComponent implements OnInit, OnDestroy {
+  // Output event emitter to send log events to parent component
+  @Output() logEvent = new EventEmitter<string>();
+
   totalTickets: number = 0;
   ticketsAvailable: number = 0;
   liveUpdates: string[] = [];
-  chartDimensions: [number, number] = [700, 400];  // Fixed chart dimensions
+  chartDimensions: [number, number] = [700, 400]; // Fixed chart dimensions
+  chartData = [
+    { name: 'Event 1', value: 30 },
+    { name: 'Event 2', value: 70 },
+  ];
+
   colorScheme: Color = {
     name: 'Custom Scheme',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA'],
   };
-  chartData = [
-    { name: 'Event 1', value: 30 },
-    { name: 'Event 2', value: 70 }
-  ];
 
-  @Output() logEvent = new EventEmitter<string>();
-  private socket!: WebSocket;  // Use definite assignment assertion
+  private dataSubscription!: Subscription;
 
-  constructor(private webSocketService: WebSocketService) {}
+  constructor(private http: HttpClient) {}
 
   ngOnInit() {
-    // Connect to WebSocket for live updates
-    this.socket = this.webSocketService.connect('ws://localhost:8080/api/live/updates');
-    
-    // Handle incoming messages from WebSocket
-    this.socket.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      this.totalTickets = data.totalTickets;
-      this.ticketsAvailable = data.ticketsAvailable;
-      this.liveUpdates = data.logs;
-      this.chartData = data.chartData || this.chartData; // Update chart data if available
-      this.emitLog('Live update received');
-    };
-
-    // Handle WebSocket errors
-    this.socket.onerror = (error) => {
-      console.error('WebSocket Error:', error);
-      this.emitLog('WebSocket connection error');
-    };
+    // Set up periodic API calls to fetch live updates every 1 second
+    this.dataSubscription = interval(1000).subscribe(() => {
+      this.fetchLiveUpdates();
+    });
   }
 
-  emitLog(message: string) {
-    this.logEvent.emit(message);  // Emit the log event with a string message
+  // Method to fetch live updates from the backend API
+  fetchLiveUpdates() {
+    this.http.get<TicketingConfiguration>('http://localhost:8080/tickets/live-updates').subscribe(
+      (data) => {
+        this.totalTickets = data.totalTickets;
+        this.ticketsAvailable = data.availableTickets;
+        
+        // Update chart data
+        this.chartData = [
+          { name: 'Total Tickets', value: data.totalTickets },
+          { name: 'Available Tickets', value: data.availableTickets },
+        ];
+
+        // Emit log update to parent component
+        this.logEvent.emit(`Update received: ${JSON.stringify(data)}`);
+
+        // Log updates for the UI
+        this.liveUpdates.push(`Update received: ${JSON.stringify(data)}`);
+      },
+      (error) => {
+        console.error('Error fetching live updates:', error);
+        this.logEvent.emit('Error fetching live updates'); // Emit error to parent
+        this.liveUpdates.push('Error fetching live updates');
+      }
+    );
   }
 
   ngOnDestroy() {
-    // Close the WebSocket connection when the component is destroyed
-    if (this.socket) {
-      this.socket.close();
+    // Unsubscribe to stop the periodic API calls when the component is destroyed
+    if (this.dataSubscription) {
+      this.dataSubscription.unsubscribe();
     }
   }
 }
