@@ -11,7 +11,7 @@ public class TicketPool {
 
     private final Queue<Ticket> ticketPool;
     private int totalTickets;
-    private int maxTicketCapacity;
+    private final int maxTicketCapacity;
 
     public TicketPool() {
         this.ticketPool = new LinkedList<>();
@@ -23,26 +23,13 @@ public class TicketPool {
     // Initialize the ticket pool with max capacity
     private void initializeTicketPool() {
         for (int i = 0; i < maxTicketCapacity; i++) {
-            ticketPool.add(new Ticket(i + 1));  // Add tickets with unique IDs
+            ticketPool.add(new Ticket(i + 1)); // Add tickets with unique IDs
         }
-    }
-
-    // Method to set max ticket capacity
-    public void setMaxTicketCapacity(int maxTicketCapacity) {
-        this.maxTicketCapacity = maxTicketCapacity;
-        // Reinitialize the pool with the new capacity
-        ticketPool.clear();
-        initializeTicketPool();
-    }
-
-    // Method to set total tickets
-    public void setTotalTickets(int totalTickets) {
-        this.totalTickets = totalTickets;
     }
 
     public synchronized boolean addTicket() {
         if (ticketPool.size() < maxTicketCapacity) {
-            ticketPool.add(new Ticket(ticketPool.size() + 1));  // Add a new ticket if capacity allows
+            ticketPool.add(new Ticket(ticketPool.size() + 1)); // Add a new ticket if capacity allows
             totalTickets++;
             return true;
         }
@@ -51,7 +38,7 @@ public class TicketPool {
 
     public synchronized boolean removeTicket() {
         if (!ticketPool.isEmpty()) {
-            Ticket ticket = ticketPool.poll();
+            ticketPool.poll(); // Remove a ticket
             totalTickets--;
             return true;
         }
