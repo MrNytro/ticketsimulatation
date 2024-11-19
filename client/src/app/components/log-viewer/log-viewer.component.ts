@@ -1,4 +1,4 @@
-import { Component } from '@angular/core';
+import { Component, Input } from '@angular/core';
 
 @Component({
   selector: 'app-log-viewer',
@@ -6,9 +6,5 @@ import { Component } from '@angular/core';
   styleUrls: ['./log-viewer.component.css']
 })
 export class LogViewerComponent {
-  logs: string[] = [];
-
-  addLog(log: string) {
-    this.logs.push(log);
-  }
+  @Input() logs: string[] = []; // Bind logs from the parent or other components
 }

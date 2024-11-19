@@ -4,9 +4,9 @@
     <app-configuration></app-configuration>
   </div>
   <div class="box">
-    <app-live-update></app-live-update>
+    <app-live-update (logEvent)="addLog($event)"></app-live-update>
   </div>
   <div class="box">
-    <app-log-viewer></app-log-viewer>
+    <app-log-viewer [logs]="logs"></app-log-viewer>
   </div>
 </div>
