@@ -23,13 +23,15 @@ public class TicketPool {
     // Initialize the ticket pool with max capacity
     private void initializeTicketPool() {
         for (int i = 0; i < maxTicketCapacity; i++) {
-            ticketPool.add(new Ticket(i + 1)); // Add tickets with unique IDs
+            // Create a ticket with a unique ID (String), default status, and availability
+            ticketPool.add(new Ticket(i + 1));
         }
     }
 
     public synchronized boolean addTicket() {
         if (ticketPool.size() < maxTicketCapacity) {
-            ticketPool.add(new Ticket(ticketPool.size() + 1)); // Add a new ticket if capacity allows
+            // Add a new ticket with a unique ID (String), default status, and availability
+            ticketPool.add(new Ticket(ticketPool.size() + 1));
             totalTickets++;
             return true;
         }

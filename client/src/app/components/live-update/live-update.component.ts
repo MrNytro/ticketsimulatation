@@ -1,87 +1,62 @@
-import { Component, OnInit, OnDestroy, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter } from '@angular/core';
+import { WebSocketService } from '../../services/websocket.service'; // Import WebSocketService
 import { Color, ScaleType } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-live-update',
   templateUrl: './live-update.component.html',
-  styleUrls: ['./live-update.component.css']
+  styleUrls: ['./live-update.component.css'],
 })
 export class LiveUpdateComponent implements OnInit, OnDestroy {
-  totalTickets: number = 20;
-  ticketsAvailable: number = 20;
-  timeElapsed: number = 0;
+  totalTickets: number = 0;
+  ticketsAvailable: number = 0;
   liveUpdates: string[] = [];
-  @Output() logEvent = new EventEmitter<string>();
-
-  chartDimensions: [number, number] = [700, 200]; // Initial dimensions
-
+  chartDimensions: [number, number] = [700, 400];  // Fixed chart dimensions
   colorScheme: Color = {
-    name: 'cool',
+    name: 'Custom Scheme',
     selectable: true,
     group: ScaleType.Ordinal,
-    domain: ['#5AA454', '#A10A28']
+    domain: ['#5AA454', '#A10A28', '#C7B42C', '#AAAAAA']
   };
+  chartData = [
+    { name: 'Event 1', value: 30 },
+    { name: 'Event 2', value: 70 }
+  ];
 
-  chartData: any[] = [];
-  private interval: any;
+  @Output() logEvent = new EventEmitter<string>();
+  private socket!: WebSocket;  // Use definite assignment assertion
 
-  constructor(private elementRef: ElementRef) {
-    this.initializeChartData();
-  }
-
-  private initializeChartData() {
-    this.chartData = [
-      {
-        name: 'Tickets Available',
-        series: [{ name: '0', value: this.ticketsAvailable }]
-      },
-      {
-        name: 'Total Tickets',
-        series: [{ name: '0', value: this.totalTickets }]
-      }
-    ];
-  }
-
-  @HostListener('window:resize')
-  onResize() {
-    this.updateChartDimensions();
-  }
-
-  private updateChartDimensions() {
-    const container = this.elementRef.nativeElement.querySelector('.chart-container');
-    if (container) {
-      this.chartDimensions = [
-        container.clientWidth,
-        container.clientHeight
-      ];
-    }
-  }
+  constructor(private webSocketService: WebSocketService) {}
 
   ngOnInit() {
-    setTimeout(() => this.updateChartDimensions(), 0);
+    // Connect to WebSocket for live updates
+    this.socket = this.webSocketService.connect('ws://localhost:8080/api/live/updates');
     
-    this.interval = setInterval(() => {
-      this.timeElapsed++;
-      
-      if (this.ticketsAvailable > 0) {
-        this.ticketsAvailable--;
-        this.logEvent.emit('*Ticket bought Successfully');
-        
-        // Create new array references for change detection
-        this.chartData = this.chartData.map(series => ({
-          ...series,
-          series: [...series.series, {
-            name: this.timeElapsed.toString(),
-            value: series.name === 'Tickets Available' ? this.ticketsAvailable : this.totalTickets
-          }]
-        }));
-      }
-    }, 1000);
+    // Handle incoming messages from WebSocket
+    this.socket.onmessage = (event) => {
+      const data = JSON.parse(event.data);
+      this.totalTickets = data.totalTickets;
+      this.ticketsAvailable = data.ticketsAvailable;
+      this.liveUpdates = data.logs;
+      this.chartData = data.chartData || this.chartData; // Update chart data if available
+      this.emitLog('Live update received');
+    };
+
+    // Handle WebSocket errors
+    this.socket.onerror = (error) => {
+      console.error('WebSocket Error:', error);
+      this.emitLog('WebSocket connection error');
+    };
+  }
+
+  emitLog(message: string) {
+    this.logEvent.emit(message);  // Emit the log event with a string message
   }
 
   ngOnDestroy() {
-    if (this.interval) {
-      clearInterval(this.interval);
+    // Close the WebSocket connection when the component is destroyed
+    if (this.socket) {
+      this.socket.close();
     }
   }
 }

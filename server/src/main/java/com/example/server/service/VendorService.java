@@ -11,7 +11,8 @@ public class VendorService {
         this.ticketService = ticketService;
     }
 
-    public boolean releaseTicket() {
+    // Vendor releases a ticket back to the pool
+    public int releaseTicket() {
         return ticketService.releaseTicket();
     }
 }

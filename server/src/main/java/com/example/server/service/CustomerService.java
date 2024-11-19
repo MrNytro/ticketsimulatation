@@ -1,6 +1,7 @@
 package com.example.server.service;
 
 import org.springframework.stereotype.Service;
+import com.example.server.model.Ticket;
 
 @Service
 public class CustomerService {
@@ -11,7 +12,10 @@ public class CustomerService {
         this.ticketService = ticketService;
     }
 
-    public boolean purchaseTicket() {
-        return ticketService.purchaseTicket();
+    public int purchaseTicket() {
+        // Create a new Ticket (you may want to use a unique ID or other logic)
+        Ticket newTicket = new Ticket(Integer.parseInt("1"));
+        // Modify this based on your logic
+        return ticketService.purchaseTicket(newTicket);
     }
 }

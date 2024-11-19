@@ -22,7 +22,7 @@ import { LogViewerComponent } from './components/log-viewer/log-viewer.component
     BrowserModule,
     FormsModule,
     HttpClientModule,
-    NgxChartsModule  // Add this line to import NgxChartsModule
+    NgxChartsModule  // Import NgxChartsModule for charting
   ],
   providers: [],
   bootstrap: [AppComponent]

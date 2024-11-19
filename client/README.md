@@ -16,7 +16,6 @@ client/
 │   │   │   │   ├── configuration.component.ts
 │   │   │   │   ├── configuration.component.html
 │   │   │   │   ├── configuration.component.css
-│   │   │   │   ├── configuration.component.css
 │   │   │   ├── live-update/
 │   │   │   │   ├── live-update.component.ts
 │   │   │   │   ├── live-update.component.html

@@ -1,37 +1,43 @@
 package com.example.server.controller;
 
+import com.example.server.model.Ticket;
 import com.example.server.service.TicketService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.http.ResponseEntity;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
 public class TicketController {
 
-    private final TicketService ticketService;
-
     @Autowired
-    public TicketController(TicketService ticketService) {
-        this.ticketService = ticketService;
+    private TicketService ticketService;
+
+    // Get all tickets (for backend monitoring)
+    @GetMapping("/")
+    public List<Ticket> getAllTickets() {
+        return ticketService.getAllTickets();
     }
 
-    @GetMapping("/available")
-    public int getAvailableTickets() {
-        return ticketService.getAvailableTickets();
-    }
-
-    @GetMapping("/total")
-    public int getTotalTickets() {
-        return ticketService.getTotalTickets();
-    }
-
-    @PostMapping("/purchase")
-    public boolean purchaseTicket() {
-        return ticketService.purchaseTicket();
-    }
-
+    // Ticket release API (for internal backend process)
     @PostMapping("/release")
-    public boolean releaseTicket() {
-        return ticketService.releaseTicket();
+    public ResponseEntity<?> releaseTicket() {
+        int released = ticketService.releaseTicket();
+        if (released == 1) {
+            return ResponseEntity.ok("Ticket released successfully");
+        }
+        return ResponseEntity.status(500).body("Failed to release ticket");
+    }
+
+    // Customer retrieves a ticket (for customer action)
+    @PostMapping("/retrieve")
+    public ResponseEntity<?> retrieveTicket(@RequestBody Ticket ticket) {
+        boolean allocated = ticketService.allocateTicket(ticket);
+        if (allocated) {
+            return ResponseEntity.ok("Ticket allocated successfully");
+        }
+        return ResponseEntity.status(500).body("Failed to allocate ticket");
     }
 }

@@ -1,4 +1,5 @@
 import { Component } from '@angular/core';
+import { HttpClient } from '@angular/common/http';
 
 @Component({
   selector: 'app-configuration',
@@ -10,6 +11,8 @@ export class ConfigurationComponent {
   ticketReleaseRate: number | null = null;
   customerRetrievalRate: number | null = null;
   maxTicketCapacity: number | null = null;
+
+  constructor(private http: HttpClient) {}
 
   startSystem(): void {
     if (
@@ -24,15 +27,55 @@ export class ConfigurationComponent {
         customerRetrievalRate: this.customerRetrievalRate,
         maxTicketCapacity: this.maxTicketCapacity,
       };
-      console.log('Starting system with configuration:', config);
-      // Call API to start the system
+
+      console.log('Sending configuration:', config); // Log the config before sending it
+
+      // Change the URL to explicitly point to the backend server
+      this.http.post<number>('http://localhost:8080/api/config/start', config).subscribe({
+        next: (responseCode) => {
+          // Handle the integer status code returned by the backend
+          switch (responseCode) {
+            case 1:
+              alert('System started successfully!');
+              break;
+            case -1:
+              alert('Error: Invalid configuration.');
+              break;
+            case -2:
+              alert('Error: System terminate request.');
+              break;
+            default:
+              alert('Unknown status code received.');
+              break;
+          }
+        },
+        error: (err) => {
+          console.error('Error starting system:', err); // Log the error response
+          alert('Error starting system');
+        },
+      });
     } else {
       alert('Please fill out all fields before starting the system.');
     }
   }
 
   endSystem(): void {
-    console.log('Ending system...');
-    // Call API to end the system
+    // Change the URL to explicitly point to the backend server
+    this.http.post<number>('http://localhost:8080/api/config/stop', {}).subscribe({
+      next: (responseCode) => {
+        // Handle the integer status code returned by the backend
+        if (responseCode === 1) {
+          console.log('System stopped successfully');
+          alert('System stopped successfully!');
+        } else {
+          console.error('Error stopping system, received status code:', responseCode);
+          alert('Error stopping system.');
+        }
+      },
+      error: (err) => {
+        console.error('Error stopping system:', err);
+        alert('Error stopping system.');
+      },
+    });
   }
 }

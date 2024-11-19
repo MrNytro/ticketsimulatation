@@ -1,38 +1,48 @@
 package com.example.server.controller;
 
+import com.example.server.model.TicketingConfiguration;
 import com.example.server.service.TicketService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
-@RequestMapping("/config")
+@RequestMapping("/api/config")
 public class ConfigController {
 
-    private final TicketService ticketService;
+    @Autowired
+    private TicketService ticketService;
 
-    public ConfigController(TicketService ticketService) {
-        this.ticketService = ticketService;
+    // Endpoint to set configuration
+    @PostMapping("/set")
+    public ResponseEntity<Integer> setConfiguration(@RequestBody TicketingConfiguration config) {
+        int success = ticketService.updateConfiguration(config);
+        if (success == 1) {
+            return ResponseEntity.ok(1); // Success status code
+        } else {
+            return ResponseEntity.status(500).body(-1); // Failure status code
+        }
     }
 
-    // Fetch the current total tickets available
-    @GetMapping("/tickets/available")
-    public int getAvailableTickets() {
-        return ticketService.getAvailableTickets();
+    // Endpoint to start the system
+    @PostMapping("/start")
+    public ResponseEntity<Integer> startSystem(@RequestBody TicketingConfiguration config) {
+        int result = ticketService.startSimulation(config);
+        if (result == 1) {
+            return ResponseEntity.ok(1); // Success status code
+        } else {
+            return ResponseEntity.status(500).body(-1); // Failure status code
+        }
     }
 
-    // Fetch the total tickets count
-    @GetMapping("/tickets/total")
-    public int getTotalTickets() {
-        return ticketService.getTotalTickets();
-    }
-
-    // Optionally: Add/remove tickets manually for testing
-    @PostMapping("/tickets/add")
-    public boolean addTicket() {
-        return ticketService.releaseTicket();
-    }
-
-    @PostMapping("/tickets/remove")
-    public boolean removeTicket() {
-        return ticketService.purchaseTicket();
+    // Endpoint to stop the system
+    @PostMapping("/stop")
+    public ResponseEntity<Integer> stopSystem() {
+        int result = ticketService.stopSimulation();
+        if (result == 1) {
+            return ResponseEntity.ok(1); // Success status code
+        } else {
+            return ResponseEntity.status(500).body(-1); // Failure status code
+        }
     }
 }
