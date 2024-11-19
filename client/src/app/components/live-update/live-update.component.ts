@@ -1,4 +1,5 @@
-import { Component, OnInit, OnDestroy } from '@angular/core';
+import { Component, OnInit, OnDestroy, Output, EventEmitter, HostListener, ElementRef } from '@angular/core';
+import { Color, ScaleType } from '@swimlane/ngx-charts';
 
 @Component({
   selector: 'app-live-update',
@@ -6,46 +7,81 @@ import { Component, OnInit, OnDestroy } from '@angular/core';
   styleUrls: ['./live-update.component.css']
 })
 export class LiveUpdateComponent implements OnInit, OnDestroy {
-  totalTickets: number = 20;  // Initial total tickets
-  ticketsAvailable: number = 20; // Initial tickets available
-  timeElapsed: number = 0;  // Time in seconds
+  totalTickets: number = 20;
+  ticketsAvailable: number = 20;
+  timeElapsed: number = 0;
   liveUpdates: string[] = [];
+  @Output() logEvent = new EventEmitter<string>();
 
-  // Chart Data for Tickets Available and Total Tickets
-  chartData = [
-    {
-      name: 'Tickets Available',
-      series: [{ name: '0', value: this.ticketsAvailable }]
-    },
-    {
-      name: 'Total Tickets',
-      series: [{ name: '0', value: this.totalTickets }]
-    }
-  ];
+  chartDimensions: [number, number] = [700, 200]; // Initial dimensions
 
+  colorScheme: Color = {
+    name: 'cool',
+    selectable: true,
+    group: ScaleType.Ordinal,
+    domain: ['#5AA454', '#A10A28']
+  };
+
+  chartData: any[] = [];
   private interval: any;
 
-  ngOnInit() {
-    // Simulate the ticket removal process every second
-    this.interval = setInterval(() => {
-      this.timeElapsed++; // Increment time
-      if (this.ticketsAvailable > 0) {
-        this.ticketsAvailable--;  // Remove 1 ticket every second
+  constructor(private elementRef: ElementRef) {
+    this.initializeChartData();
+  }
+
+  private initializeChartData() {
+    this.chartData = [
+      {
+        name: 'Tickets Available',
+        series: [{ name: '0', value: this.ticketsAvailable }]
+      },
+      {
+        name: 'Total Tickets',
+        series: [{ name: '0', value: this.totalTickets }]
       }
+    ];
+  }
+
+  @HostListener('window:resize')
+  onResize() {
+    this.updateChartDimensions();
+  }
+
+  private updateChartDimensions() {
+    const container = this.elementRef.nativeElement.querySelector('.chart-container');
+    if (container) {
+      this.chartDimensions = [
+        container.clientWidth,
+        container.clientHeight
+      ];
+    }
+  }
+
+  ngOnInit() {
+    setTimeout(() => this.updateChartDimensions(), 0);
+    
+    this.interval = setInterval(() => {
+      this.timeElapsed++;
       
-      // Update chart data with the new value of tickets available and total tickets
-      this.chartData[0].series.push({ name: `${this.timeElapsed}`, value: this.ticketsAvailable });
-      this.chartData[1].series.push({ name: `${this.timeElapsed}`, value: this.totalTickets });
-    }, 1000);  // Update every second
+      if (this.ticketsAvailable > 0) {
+        this.ticketsAvailable--;
+        this.logEvent.emit('*Ticket bought Successfully');
+        
+        // Create new array references for change detection
+        this.chartData = this.chartData.map(series => ({
+          ...series,
+          series: [...series.series, {
+            name: this.timeElapsed.toString(),
+            value: series.name === 'Tickets Available' ? this.ticketsAvailable : this.totalTickets
+          }]
+        }));
+      }
+    }, 1000);
   }
 
   ngOnDestroy() {
     if (this.interval) {
-      clearInterval(this.interval); // Clean up the interval when the component is destroyed
+      clearInterval(this.interval);
     }
-  }
-
-  addUpdate(message: string) {
-    this.liveUpdates.push(message); // Add live updates to the log
   }
 }
