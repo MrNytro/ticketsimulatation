@@ -1,8 +1,7 @@
-
 /* Title and subheading styles */
 .ConfigTitle {
-  font-size: 24px;
-  margin-top: 15px;
+  font-size: 2vw;  /* Adjust font size relative to the viewport width */
+  margin-top: 2vh;  /* Use viewport height for spacing */
   text-align: center;
   font-family: sans-serif;
   font-weight: bold;
@@ -10,32 +9,35 @@
 
 .ConfigInfo {
   font-family: tahoma;
-  font-size: 15px;
-  margin: 10px 0 0 10px;
+  font-size: 1.2vw;  /* Responsive font size */
+  margin: 1vh 0 1vh 2vw;
   text-align: left;
 }
 
 .TextBox {
-  height: 30px;
-  margin: 5px 10px 5px 10px;
+  height: 5vh;  /* Adjust height with viewport units */
+  padding-left: 2vh;
+  margin: 1vh 2vw;
   border: 1px solid #ccc;
   border-radius: 50px;
   background-color: #f9f9f9;
   color: #333;
   box-sizing: border-box;
+  font-size: 1vw;
+  width: 90%;  /* Make the textbox width responsive */
 }
 
 /* Button styling */
 .button-container {
-  margin-top: 25px;
-  margin-left: 10px;
+  margin-top: 3vh;
+  margin-left: 2vw;
   display: flex;
-  gap: 20px;
+  gap: 2vw;  /* Use relative units for spacing */
 }
 
 .btn {
-  padding: 10px 10px;
-  font-size: 16px;
+  padding: 1vh 2vw;
+  font-size: 1vw;  /* Adjust font size relative to viewport */
   background-color: #007BFF;
   color: white;
   border: none;

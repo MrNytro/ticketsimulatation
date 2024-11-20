@@ -1,52 +1,91 @@
 /* Main container to hold the components side by side */
 .container {
-    display: flex;
-    justify-content: space-between;
-    gap: 20px;  /* Space between the boxes */
-    padding: 20px;
-    height: 100vh;
-    box-sizing: border-box;
+  display: flex;
+  justify-content: space-between;
+  gap: 2%;  /* Space between the boxes */
+  padding: 2%;  /* Padding in percentage for responsiveness */
+  height: 100vh;
+  box-sizing: border-box;
+  flex-wrap: wrap;  /* Allow wrapping on smaller screens */
+}
+
+/* Header styling */
+.header {
+  text-align: center;
+  font-family: sans-serif;
+  font-weight: bold;
+  background-color: #EEEEEE;
+  color: black;
+  width: 100%;
+  height: 10%;  /* Percentage height */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  margin: 0;
+  font-size: 3vw;  /* Adjust font size relative to screen width */
+  text-align: center;
+  overflow: hidden;
+  box-shadow: 3px 5px 6px rgba(169, 169, 169, 0.6); 
+}
+
+/* Styling for each box */
+.box {
+  background-color: #f4f4f4;
+  padding: 2%;  /* Padding in percentage */
+  border-radius: 8px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+  flex: 1;  /* Allow the boxes to grow and fill space */
+  min-width: 250px;  /* Minimum width for each box */
+  height: 75%; /* Use percentage height */
+  overflow: auto; /* Add scroll if content overflows */
+}
+
+/* Add some styling for the components inside the boxes */
+app-configuration, app-live-update, app-log-viewer {
+  margin-bottom: 3%;  /* Margin in percentage */
+}
+
+/* Optional: Add a border and padding to the title of each box */
+h2 {
+  font-size: 1.5rem;
+  margin-bottom: 2%;  /* Margin in percentage */
+  color: #333;
+}
+
+/* Media queries for responsiveness on smaller screens */
+@media (max-width: 768px) {
+  .container {
+    flex-direction: column;  /* Stack boxes vertically on smaller screens */
+    gap: 5%;  /* Increase space between boxes */
   }
 
   .header {
-    text-align: center;
-    font-family: sans-serif;
-    font-weight: bold;
-    background-color: #EEEEEE;
-    color: black;
-    width: 100%;
-    height: 100px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    margin: 0;
-    font-size: 42px;
-    text-align: center;
-    overflow: hidden;
-    box-shadow: 3px 5px 6px rgba(169, 169, 169, 0.6); 
+    font-size: 4vw;  /* Smaller font size on mobile */
+    height: 15%;  /* Adjust header height */
   }
-  
-  /* Styling for each box */
+
   .box {
-    background-color: #f4f4f4;
-    padding: 20px;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-    flex: 1;  /* Allow the boxes to grow and fill space */
-    min-width: 250px;  /* Minimum width for each box */
-    height: 75%; /* Make boxes full height */
-    overflow: auto; /* Add scroll if content overflows */
+    width: 100%;  /* Make boxes take full width on small screens */
+    height: auto;  /* Allow height to adjust based on content */
   }
-  
-  /* Add some styling for the components inside the boxes */
-  app-configuration, app-live-update, app-log-viewer {
-    margin-bottom: 20px;
-  }
-  
-  /* Optional: Add a border and padding to the title of each box */
+
   h2 {
-    font-size: 1.5rem;
-    margin-bottom: 10px;
-    color: #333;
+    font-size: 1.2rem;  /* Smaller font size for headers on small screens */
   }
-  
+}
+
+@media (max-width: 480px) {
+  .header {
+    font-size: 5vw;  /* Even smaller font size on very small screens */
+    height: 20%;  /* Adjust height further on smaller devices */
+  }
+
+  .box {
+    height: auto;  /* Allow boxes to adjust their height based on content */
+    padding: 5%;  /* More padding on smaller devices */
+  }
+
+  h2 {
+    font-size: 1rem;  /* Even smaller header font size */
+  }
+}

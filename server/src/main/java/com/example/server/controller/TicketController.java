@@ -65,16 +65,16 @@ public class TicketController {
         return config;
     }
 
-    // New endpoint to fetch event logs
-    @GetMapping("/logs")
-    public List<String> getLogs() {
+    // New endpoint to fetch the latest event log
+    @GetMapping("/latest-log")
+    public String getLatestLog() {
         String clientIp = getClientIp();
-        System.out.println("[tktControl] Received GET request from " + clientIp + " to fetch logs.");
+        System.out.println("[tktControl] Received GET request from " + clientIp + " to fetch the latest event log.");
 
-        // Fetch the event logs from the service
-        List<String> logs = ticketService.getEventLogs();
+        // Fetch the latest event log from the service
+        String latestLog = ticketService.getLatestEventLog();
 
-        return logs; // Return logs to frontend
+        return latestLog; // Return the latest log to frontend
     }
 
     // Helper method to get client IP (can be improved based on actual use case)

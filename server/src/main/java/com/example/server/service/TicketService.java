@@ -3,8 +3,6 @@ package com.example.server.service;
 import com.example.server.model.TicketingConfiguration;
 import org.springframework.stereotype.Service;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 
@@ -13,7 +11,8 @@ public class TicketService {
     private TicketingConfiguration config;
     private Timer timer;
     private boolean simulationRunning;
-    private List<String> eventLogs = new ArrayList<>(); // List to hold event logs
+    private String latestEventLog = ""; // Store only the latest event log
+    private String previousEventLog = ""; // Store the previous event log
 
     // Start the simulation with the provided configuration
     public int startSimulation(TicketingConfiguration config) {
@@ -45,9 +44,10 @@ public class TicketService {
         return this.config;
     }
 
-    // Fetch event logs
-    public List<String> getEventLogs() {
-        return new ArrayList<>(eventLogs); // Return a copy of the logs
+    // Fetch the latest event log with both logs (customer and vendor)
+    public String getLatestEventLog() {
+        // Return both the logs with a newline separator
+        return previousEventLog + "\n" + latestEventLog;
     }
 
     // Start the ticket simulation with customer and vendor threads
@@ -84,19 +84,15 @@ public class TicketService {
 
     // Log the current ticket pool state (to be sent to the frontend)
     private void logTicketUpdate(String action) {
-        String logMessage = action + " | " +
+        // Store the previous log before updating
+        previousEventLog = latestEventLog;
+
+        // Create the log message with the current ticket state
+        latestEventLog = action + " | " +
                 String.format("{totalTickets: %d, availableTickets: %d}",
                         config.getTotalTickets(), config.getAvailableTickets());
 
-        // Add the log message to the eventLogs list
-        eventLogs.add(logMessage);
-
-        // Optionally, you can limit the log size (e.g., keep only the last 50 logs)
-        if (eventLogs.size() > 50) {
-            eventLogs.remove(0); // Remove the oldest log if the list exceeds the limit
-        }
-
-        // Optionally log to the console
-        System.out.println(logMessage);
+        // Optionally, you can log it to the console
+        System.out.println(latestEventLog);
     }
 }

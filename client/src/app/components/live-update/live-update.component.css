@@ -1,8 +1,7 @@
-
 /* Ensure the chart is large enough */
 .live-update ngx-charts-line-chart {
-  width: 100%; 
-  height: 300px;  /* Adjust height as needed */
+  width: 100%;  /* Make chart width responsive */
+  height: 25vh;  /* Use viewport height for scaling */
 }
 
 /* Make the log viewer scrollable */
@@ -11,14 +10,13 @@
   overflow-y: auto;
 }
 
-
 .live-update {
-  padding: 20px;
+  padding: 2vh 3vw;
 }
 
 table {
-  margin-bottom: 20px;
-  width: 100%;
+  margin-bottom: 3vh;
+  width: 100%;  /* Ensure table takes full width */
   border-collapse: collapse;
 }
 
@@ -27,18 +25,17 @@ table, th, td {
 }
 
 th, td {
-  padding: 8px;
+  padding: 1vw;  /* Use relative units for padding */
   text-align: center;
 }
 
 svg {
-  margin-top: 20px;
+  margin-top: 2vh;
 }
 
 .chart-container {
   position: relative;
   width: 100%;
-  height: 200px; /* Adjust this value as needed */
-  margin: 10px 0;
+  height: 20vh; /* Use viewport height for container */
+  margin: 2vh 0;
 }
-

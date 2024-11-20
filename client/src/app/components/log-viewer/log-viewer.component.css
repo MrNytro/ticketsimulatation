@@ -1,40 +1,50 @@
+/* Log viewer container */
 .log-viewer {
-  width: 400px;
-  height: 400px;
+  width: 85%;  /* Full width to adapt to container */
+  height: 50vh;  /* Height as a percentage of viewport */
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow-y: auto;
   background-color: #f9f9f9;
-  padding: 10px;
-  display: flex;
-  flex-direction: column-reverse; /* Start from the bottom */
+  padding: 2vw;
+  font-family: 'Courier New', Courier, monospace;
+  font-size: 1.2vw;  /* Relative font size */
+  line-height: 1.4;
 }
 
-.log-viewer ul {
-  margin: 0;
-  padding: 0;
-  list-style: none;
-}
-
-.log-item {
-  background-color: lightblue; /* Light blue background */
+/* Log box styling */
+.log-box {
+  padding: 2vh 2vw;
+  margin-bottom: 2vh;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  font-family: 'Courier New', Courier, monospace;
   color: black;
-  padding: 10px;
-  margin-bottom: 5px;
-  border-radius: 5px;
-  font-size: 14px;
-  font-family: Arial, sans-serif;
-  animation: slideUp 0.5s ease-out; /* Animation for the log items */
+  font-size: 0.8vw;  /* Adjust font size for scalability */
+  line-height: 1.4;
+  transition: transform 0.2s ease-out;
 }
 
-/* Animation for log items sliding up */
-@keyframes slideUp {
-  0% {
-    opacity: 0;
-    transform: translateY(20px); /* Start from below */
-  }
-  100% {
-    opacity: 1;
-    transform: translateY(0); /* End at normal position */
-  }
+/* Custom classes for different log types */
+.vendor-log {
+  background-color: #cce5ff; /* Light Blue */
+}
+
+.customer-log {
+  background-color: #d4edda; /* Light Green */
+}
+
+/* Scrollbar customization */
+.log-viewer::-webkit-scrollbar {
+  width: 5px;
+}
+
+.log-viewer::-webkit-scrollbar-thumb {
+  background: #888;
+  border-radius: 4px;
+}
+
+.log-viewer::-webkit-scrollbar-thumb:hover {
+  background: #555;
 }
