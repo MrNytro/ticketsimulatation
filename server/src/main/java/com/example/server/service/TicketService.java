@@ -19,6 +19,12 @@ public class TicketService {
         this.config = config;
         this.simulationRunning = true;
 
+        // Initialize totalTickets and availableTickets
+        if (this.config.getTotalTickets() == 0) {
+            this.config.setTotalTickets(0);
+        }
+        this.config.setAvailableTickets(this.config.getTotalTickets()); // Set availableTickets to totalTickets
+
         // Start a background thread for simulation
         startTicketSimulation();
         return 1;

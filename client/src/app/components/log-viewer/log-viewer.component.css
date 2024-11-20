@@ -1,7 +1,7 @@
 /* Log viewer container */
 .log-viewer {
   width: 85%;  /* Full width to adapt to container */
-  height: 50vh;  /* Height as a percentage of viewport */
+  height: 55vh;  /* Height as a percentage of viewport */
   border: 1px solid #ccc;
   border-radius: 8px;
   overflow-y: auto;

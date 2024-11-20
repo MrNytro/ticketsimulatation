@@ -1,41 +1,50 @@
 /* Ensure the chart is large enough */
 .live-update ngx-charts-line-chart {
-  width: 100%;  /* Make chart width responsive */
-  height: 25vh;  /* Use viewport height for scaling */
+  width: 100%;  /* Make chart width responsive, adapting to the parent container width */
+  height: 25vh;  /* Set chart height to 25% of the viewport height for responsiveness */
+  padding-left: 0px;  /* Remove left padding to align the chart with the container */
+  margin-left: -5%;  /* Shift the chart slightly to the left (adjust as needed) */
 }
 
 /* Make the log viewer scrollable */
 .log-viewer ul {
-  max-height: 200px;
-  overflow-y: auto;
+  max-height: 50vh;  /* Set a maximum height for the log viewer relative to the viewport */
+  overflow-y: auto;   /* Enable vertical scrolling when content exceeds max height */
 }
 
+/* General styling for the live update container */
 .live-update {
-  padding: 2vh 3vw;
+  padding: 2vh 3vw;   /* Add padding around the container (relative to viewport height/width) */
+  width: 100%;         /* Ensure the container takes up the full width of the parent */
 }
 
+/* Styling for the table displaying ticket info */
 table {
-  margin-bottom: 3vh;
-  width: 100%;  /* Ensure table takes full width */
-  border-collapse: collapse;
+  margin-bottom: 3vh;  /* Add margin below the table for spacing */
+  width: 85%;  /* Set table width to 85% of its parent container */
+  border-collapse: collapse;  /* Collapse borders between table cells */
 }
 
+/* Styling for the table and table cells (borders) */
 table, th, td {
-  border: 1px solid black;
+  border: 1px solid black;  /* Add a solid black border around the table, headers, and cells */
 }
 
+/* Styling for table header and data cells */
 th, td {
-  padding: 1vw;  /* Use relative units for padding */
-  text-align: center;
+  padding: 1vw;  /* Add padding to cells (relative to viewport width) */
+  text-align: center;  /* Center-align text inside the cells */
 }
 
+/* Adjust SVG (chart) position */
 svg {
-  margin-top: 2vh;
+  margin-top: 2vh;  /* Add margin on top of the SVG element for spacing */
 }
 
+/* Styling for the chart container */
 .chart-container {
-  position: relative;
-  width: 100%;
-  height: 20vh; /* Use viewport height for container */
-  margin: 2vh 0;
+  position: relative;  /* Set the position of the container as relative for inner positioning */
+  width: 85%;  /* Set the width of the container to 85% of the parent container */
+  height: 20vh; /* Set the container height to 20% of the viewport height */
+  margin: 2vh 0;  /* Add vertical margin to separate the container from other elements */
 }
