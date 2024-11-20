@@ -3,6 +3,7 @@ import { HttpClient } from '@angular/common/http';
 import { Subscription, interval } from 'rxjs';
 import { TicketingConfiguration } from '../../models/ticketing-configuration.model'; // Import the model
 import { Color, ScaleType } from '@swimlane/ngx-charts'; // Import for chart functionality
+import { StartService } from '../../services/app-start.service'; // Import the StartService
 
 @Component({
   selector: 'app-live-update',
@@ -31,13 +32,35 @@ export class LiveUpdateComponent implements OnInit, OnDestroy {
 
   private dataSubscription!: Subscription;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private startService: StartService) {}
 
   ngOnInit() {
-    // Set up periodic API calls to fetch live updates every 1 second
-    this.dataSubscription = interval(1000).subscribe(() => {
-      this.fetchLiveUpdates();
+    // Subscribe to hasStarted state
+    this.startService.hasStarted$.subscribe((hasStarted) => {
+      if (hasStarted) {
+        // Only start fetching live updates if the system has started
+        this.startLiveUpdates();
+      } else {
+        // Stop fetching live updates if the system is stopped
+        this.stopLiveUpdates();
+      }
     });
+  }
+
+  // Method to start fetching live updates (API calls)
+  startLiveUpdates() {
+    if (!this.dataSubscription || this.dataSubscription.closed) {
+      this.dataSubscription = interval(1000).subscribe(() => {
+        this.fetchLiveUpdates();
+      });
+    }
+  }
+
+  // Method to stop fetching live updates
+  stopLiveUpdates() {
+    if (this.dataSubscription && !this.dataSubscription.closed) {
+      this.dataSubscription.unsubscribe();
+    }
   }
 
   // Method to fetch live updates from the backend API
@@ -69,8 +92,6 @@ export class LiveUpdateComponent implements OnInit, OnDestroy {
 
   ngOnDestroy() {
     // Unsubscribe to stop the periodic API calls when the component is destroyed
-    if (this.dataSubscription) {
-      this.dataSubscription.unsubscribe();
-    }
+    this.stopLiveUpdates();
   }
 }

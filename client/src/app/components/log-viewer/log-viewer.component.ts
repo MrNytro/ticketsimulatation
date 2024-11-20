@@ -1,6 +1,7 @@
 import { Component, OnInit, OnDestroy, ChangeDetectorRef } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
 import { interval, Subscription } from 'rxjs';
+import { StartService } from '../../services/app-start.service'; // Import StartService
 
 @Component({
   selector: 'app-log-viewer',
@@ -11,18 +12,38 @@ export class LogViewerComponent implements OnInit, OnDestroy {
   logs: string[] = [];  // Array to hold the logs
   private logSubscription!: Subscription;
 
-  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef) {}
+  constructor(private http: HttpClient, private cdRef: ChangeDetectorRef, private startService: StartService) {}
 
   ngOnInit() {
-    // Fetch the latest log every second
-    this.logSubscription = interval(1000).subscribe(() => {
-      this.fetchLatestLog();
+    // Subscribe to the hasStarted state
+    this.startService.hasStarted$.subscribe((hasStarted) => {
+      if (hasStarted) {
+        // Start fetching logs if the system has started
+        this.startLogFetching();
+      } else {
+        // Stop fetching logs if the system is stopped
+        this.stopLogFetching();
+      }
     });
   }
 
   ngOnDestroy() {
     // Unsubscribe to avoid memory leaks
-    if (this.logSubscription) {
+    this.stopLogFetching();
+  }
+
+  // Method to start fetching logs every second
+  private startLogFetching() {
+    if (!this.logSubscription || this.logSubscription.closed) {
+      this.logSubscription = interval(1000).subscribe(() => {
+        this.fetchLatestLog();
+      });
+    }
+  }
+
+  // Method to stop fetching logs
+  private stopLogFetching() {
+    if (this.logSubscription && !this.logSubscription.closed) {
       this.logSubscription.unsubscribe();
     }
   }

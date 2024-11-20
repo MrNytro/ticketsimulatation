@@ -1,5 +1,6 @@
 import { Component } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
+import { StartService } from '../../services/app-start.service';  // Import the service
 
 @Component({
   selector: 'app-configuration',
@@ -12,7 +13,7 @@ export class ConfigurationComponent {
   customerRetrievalRate: number | null = null;
   maxTicketCapacity: number | null = null;
 
-  constructor(private http: HttpClient) {}
+  constructor(private http: HttpClient, private startService: StartService) {}
 
   startSystem(): void {
     if (
@@ -37,6 +38,7 @@ export class ConfigurationComponent {
           switch (responseCode) {
             case 1:
               alert('System started successfully!');
+              this.startService.setStarted(true);  // Set the system as started
               break;
             case -1:
               alert('Error: Invalid configuration.');
@@ -67,6 +69,7 @@ export class ConfigurationComponent {
         if (responseCode === 1) {
           console.log('System stopped successfully');
           alert('System stopped successfully!');
+          this.startService.setStarted(false);  // Set the system as stopped
         } else {
           console.error('Error stopping system, received status code:', responseCode);
           alert('Error stopping system.');
